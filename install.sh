@@ -9,5 +9,5 @@ do
     sleep 2;
     export WAITING=''
 done
-echo arm-none-eabi-objcopy target/thumbv6m-none-eabi/debug/microbit /media/$USER/MICROBIT/out.hex -O ihex
-arm-none-eabi-objcopy target/thumbv6m-none-eabi/debug/microbit /media/$USER/MICROBIT/out.hex -O ihex
+echo arm-none-eabi-objcopy target/thumbv6m-none-eabi/debug/hellomicrobit /media/$USER/MICROBIT/out.hex -O ihex
+arm-none-eabi-objcopy target/thumbv6m-none-eabi/debug/hellomicrobit /media/$USER/MICROBIT/out.hex -O ihex

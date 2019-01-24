@@ -13,7 +13,7 @@ extern crate alloc_cortex_m;
 extern crate cortex_m_rt as rt; // v0.5.x
 
 #[macro_use(block)]
-extern crate microbit;
+extern crate hellomicrobit as microbit;
 
 extern crate cortex_m;
 
@@ -22,9 +22,7 @@ use alloc_cortex_m::CortexMHeap;
 use microbit::hal::prelude::*;
 use microbit::hal::serial::BAUD115200;
 use microbit::hal::serial;
-use microbit::led::Display;
-extern crate bmlite;
-use bmlite::*;
+
 extern crate embedded_hal;
 use microbit::hal;
 use hal::spi::SpiExt;
@@ -35,32 +33,37 @@ use cortex_m_rt::entry;
 #[global_allocator]
 static ALLOCATOR: CortexMHeap = CortexMHeap::empty();
 
-fn hex_nible(i:u8)-> u8{
-    if i&0xF <10 {
-       (i&0xf)+0x30
-    }else{
-       (i & 0xf) + 0x40 - 10
-    }
-}
-
-fn hex(a:u8) -> [u8;2] {
-    [hex_nible(a>>4),hex_nible(a)]
-}
-
+// the eink library
+extern crate epd_waveshare;
+use epd_waveshare::{
+    epd1in54::{Buffer1in54, EPD1in54},
+    graphics::{Display, DisplayRotation},
+    prelude::*,
+};
+// Graphics
+extern crate embedded_graphics;
+use embedded_graphics::coord::Coord;
+use embedded_graphics::fonts::Font6x8;
+use embedded_graphics::prelude::*;
+//use embedded_graphics::primitives::{Circle, Line};
+use embedded_graphics::Drawing;
 pub mod bitmaps;
 // use microbit::microbit_bitmaps as bitmaps;
 #[entry]
 fn main() -> ! {
-    unsafe { ALLOCATOR.init(cortex_m_rt::heap_start() as usize, 2048 as usize) }
+    unsafe { ALLOCATOR.init(cortex_m_rt::heap_start() as usize, 2048 as usize) };
 
     if let Some(p) = microbit::Peripherals::take() {
         /* Split GPIO pins */
         let mut gpio = p.GPIO.split();
         let mut delay = hal::delay::Delay::new(p.TIMER0);
+        let pxx = cortex_m::Peripherals::take().unwrap();
 
-      /* Set row of // LED matrix to permanent high */
+        let syst = pxx.SYST;
+        let clocks = p.CLOCK;
+        /* Set row of // LED matrix to permanent high */
 
-        let mut display = Display::new(
+        let mut display = microbit::led::Display::new(
             gpio.pin4.into_push_pull_output(),
             gpio.pin5.into_push_pull_output(),
             gpio.pin6.into_push_pull_output(),
@@ -89,112 +92,91 @@ fn main() -> ! {
         /* Set up serial port using the prepared pins */
         let (mut tx, mut rx) = serial::Serial::uart0(p.UART0, tx, rx, BAUD115200).split();
 
-        let mut spix = p.SPI1.constrain( hal::spi::Pins{
+        let mut spi = p.SPI0.constrain( hal::spi::Pins{
                 sck: gpio.pin23.into_push_pull_output().downgrade(),
                 mosi: gpio.pin21.into_push_pull_output().downgrade(),
                 miso: gpio.pin22.into_floating_input().downgrade()});
-
-        //let mut spi = hal::
-        /* Print a nice hello message */
 
         let s = b"Hello connect BM Lite and start\r\n";
         let _ = s.into_iter().map(|c| block!(tx.write(*c))).last();
 
 
-        // Conect pins for reset and IRQ
-        let mut spi_cs = gpio.pin16.into_push_pull_output();
-        let mut spi_rst = gpio.pin30.into_push_pull_output();
-        let mut spi_irq = gpio.pin0.into_pull_up_input();
+         // Conect pins for reset and IRQ  
+        let mut cs = gpio.pin1.into_push_pull_output();    // Pad 2
+        let mut rst = gpio.pin2.into_push_pull_output();   // Pad 1
+        let mut busy = gpio.pin3.into_pull_up_input();      // Pad 0   // Setup the epd
+
+    	let mut dc = gpio.pin20.into_push_pull_output();
 
         let mut  btn_a = gpio.pin17.into_pull_up_input();
         let mut  btn_b = gpio.pin26.into_pull_up_input();
+        let mut epd = EPD1in54::new(&mut spi, cs, busy, dc, rst, &mut delay).unwrap();
 
-        let mut bm = BmLite::new(spix, spi_cs,spi_rst,spi_irq);
+        // Setup the graphics
+        let mut buffer = Buffer1in54::default();
+        let mut eink = Display::new(epd.width(), epd.height(), &mut buffer.buffer);
 
-        let _ans = bm.reset(||{asm::delay(100);});
+        // Draw some text
+        eink.draw(
+            Font6x8::render_str("シモンソン  Hello!   奈穂  åratal ")
+                .with_stroke(Some(Color::Black))
+                .with_fill(Some(Color::White))
+                .translate(Coord::new(5, 50))
+                .into_iter(),
+        );
+
+        // Transfer the frame data to the epd
+        let _ans = epd.update_frame(&mut spi, &eink.buffer());
+
+        // Display the frame on the epd
+        let _ans2 = epd.display_frame(&mut spi);
 
         loop {
-            let mut fingerpresent = false;
+         
             display.display_pre_u32(&mut delay,bitmaps::img::minus,30);
-            let ans = bm.capture(1000);
-            match ans {
-                Ok(present) => { fingerpresent = present==0 },
-                Err(_) => {
-                    // let _ans = bm.reset();
-                },
-            } // The user interface touch the sensor and btn at the same time to ensoll
-            // Extreemly secure
             if btn_a.is_low(){
+
+                eink.draw(
+                Font6x8::render_str("Some more test ")
+                        .with_stroke(Some(Color::Black))
+                        .with_fill(Some(Color::White))
+                        .translate(Coord::new(10, 50))
+                        .into_iter(),
+                );
+
+                // Transfer the frame data to the epd
+                let _ans = epd.update_frame(&mut spi, &eink.buffer());
+
+                // Display the frame on the epd
+                let _ans2 = epd.display_frame(&mut spi);
+
                 display.display_pre_u32(&mut delay,bitmaps::img::question_mark,5000);
-                if btn_a.is_low(){
-                    let _ans = bm.delete_all();
-                }
             }
             if btn_b.is_low(){
                 display.display_pre_u32(&mut delay,bitmaps::img::hbars_top_botom,1000);
+                eink.draw(
+                    Font6x8::render_str("Another")
+                        .with_stroke(Some(Color::White))
+                        .with_fill(Some(Color::Black))
+                        .translate(Coord::new(5, 25))
+                        .into_iter(),
+                );
 
-                let ans = bm.enroll(|progress|
-                                        {
-                                            let pat = match progress{
-                                                0 => 0x3070,
-                                                1 => 0x30f0,
-                                                2 => 0x31f0,
-                                                3 => 0x33f0,
-                                                _ => 0x37f0,
-                                            };
-                                            display.display_static_raw(pat);
-                                         });
-                match ans {
-                    Ok(_) => {
-                        let s=b"Finger enrolled\r\n";
-                        let _ = s.into_iter().map(|c| block!(tx.write(*c))).last();
+                // Transfer the frame data to the epd
+                let _ans = epd.update_frame(&mut spi, &eink.buffer());
 
-                        display.display_pre_u32(&mut delay, bitmaps::img::full_square,1000);
-                        display.display_pre_u32(&mut delay, bitmaps::img::square_image,200);
-                        display.display_pre_u32(&mut delay, bitmaps::img::square_small_image,200);
-                        display.display_pre_u32(&mut delay, bitmaps::img::dot33,200);
-                    },
-                    Err(_) => {
-                        loop{
-                          display.display_pre_u32(&mut delay,bitmaps::img::x_big,3000);
-                        }
-                    }
-                }
-            }else if fingerpresent{
-                let ans= bm.identify();
-                match ans {
-                    Ok(id) => {
-                        display.display_pre_u32(&mut delay,bitmaps::img::circle,300);
-                        match id{
-                            0 => {display.display_pre_u32(&mut delay, bitmaps::img::sword_image ,1400);
-                            }
-                            1 => {display.display_pre_u32(&mut delay, bitmaps::img::pacman_image  ,1400);
-                            }
-                            2 => {display.display_pre_u32(&mut delay, bitmaps::img::pitchfork_image ,1400);
-                            }
-                            _ => {}
-                        }
-                        let s=b"Finger identifed as ";
-                        let _ = s.into_iter().map(|c| block!(tx.write(*c))).last();
-                        let s= hex(id as u8);
-                        let _ = s.into_iter().map(|c| block!(tx.write(*c))).last();
-                        display.display_pre_u32(&mut delay,bitmaps::img::circle,300);
-                    }
-                    Err(bmlite::Error::NoMatch) => {
-                        // led0.set_high();
-                        let s=b"Finger Not known.\r\n";
-                        let _ = s.into_iter().map(|c| block!(tx.write(*c))).last();
-                        display.display_pre_u32(&mut delay,bitmaps::img::x_big, 300);
-                    }
-                    Err(_) => {/*let _ans=bm.reset();*/}
-                }
+                // Display the frame on the epd
+                let _ans2 = epd.display_frame(&mut spi);
             }
         }
-    }
-    loop {
-        continue;
+    }else{
+        loop{
+
+        }
     }
 }
+
+
 // required: define how Out Of Memory (OOM) conditions should be handled
 // *if* no other crate has already defined `oom`
 #[lang = "oom"]
