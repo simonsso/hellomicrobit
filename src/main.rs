@@ -27,6 +27,8 @@ use microbit::led;
 // // use microbit::hal::prelude::*;
 
 // use microbit::led;
+mod bitmaps;
+
 
 #[entry]
 fn main() -> ! {
@@ -65,19 +67,25 @@ fn main() -> ! {
             [0, 0, 1, 0, 0],
             [0, 1, 1, 1, 0],
         ];
+        let image3 = bitmaps::img::image_to_preformated_vector(0x05db0975);
+        let image0 = bitmaps::img::image_to_preformated_vector(bitmaps::img::yes_image);
+        let image1 = bitmaps::img::image_to_preformated_vector(bitmaps::img::no_image);
+        let image2 = bitmaps::img::image_to_preformated_vector(bitmaps::img::dot33);
+        let image4 = microbit::led::Display::display2matrix(letter_I);
+
+
         loop {
             if let Ok(true) = button_a.is_high() {
-                display.display(&mut delay, letter_I, 1000);
-                
-                
+                display.display_pre(&mut delay, image0,300);
             } else {
-                
+                display.display_pre(&mut delay, image1,300);
             }
-            // if let Ok(true) = button_b.is_high() {
-            //     let _ = led2.set_high();
-            // } else {
-            //     let _ = led2.set_low();
-            // }
+            if let Ok(true) = button_b.is_high() {
+                display.display_pre(&mut delay, image2,300);
+
+            } else {
+                display.display_pre(&mut delay, image3,300);
+            }
         }
     }
 
@@ -85,3 +93,11 @@ fn main() -> ! {
         continue;
     }
 }
+
+// #[test]
+// fn test_image_to_preformated_vector() {
+//     let ans = super::image_to_preformated_vector(0x05db0975);
+
+
+// }
+
