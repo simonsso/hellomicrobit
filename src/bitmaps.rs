@@ -32,6 +32,15 @@
 pub mod img {
    #![allow(non_upper_case_globals)]
 
+   pub fn image_to_preformated_vector(image:u32) ->[[u8;9];3] {
+      let mut ans:[[u8; 9]; 3]= [[0,0,0,0,0,0,0,0,0],    [0,0,0,0,0,0,0,0,0],    [0,0,0,0,0,0,0,0,0]];
+      let image = !image;
+      for i in 0..27 {
+         ans[i/9][i%9] = 1 & (image >> i) as u8;
+      }
+      ans
+   }
+
    ///    *** 
    ///   *   *
    ///     ** 
