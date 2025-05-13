@@ -75,16 +75,24 @@ fn main() -> ! {
 
 
         loop {
-            if let Ok(true) = button_a.is_high() {
-                display.display_pre(&mut delay, image0,300);
-            } else {
-                display.display_pre(&mut delay, image1,300);
-            }
-            if let Ok(true) = button_b.is_high() {
-                display.display_pre(&mut delay, image2,300);
-
-            } else {
-                display.display_pre(&mut delay, image3,300);
+            match (button_a.is_high(),button_b.is_high()) {
+                (Ok(true),Ok(true)) => {
+                    display.display_pre(&mut delay, image0,300);
+                },
+                (Ok(false),Ok(false))=> {
+                    display.display_pre(&mut delay, image1,300);
+                },
+                (Ok(true),Ok(false))=> {
+                    display.display_pre(&mut delay, image2,300);
+                },
+                (Ok(false),Ok(true))=> {
+                    display.display_pre(&mut delay, image3,300);
+                }
+                _ => {
+                    // Error case - at least one GPIO returned an error
+                    display.display_pre(&mut delay, image4,800);
+                }
+                
             }
         }
     }
