@@ -54,11 +54,11 @@ fn main() -> ! {
         // Configure button GPIOs as inputs
         let button_a = gpio.pin17.into_floating_input();
         let button_b = gpio.pin26.into_floating_input();
-        // led::display.led::display_pre_u32(&mut delay, bitmaps::img::square_image , 300);
-        // led::display.led::display_pre_u32(&mut delay, bitmaps::img::square_small_image, 300);
-        // led::display.led::display_pre_u32(&mut delay, bitmaps::img::dot33 , 300);
-        // led::display.led::display_pre_u32(&mut delay, bitmaps::img::diamond_small_image , 300);
-        // led::display.led::display_pre_u32(&mut delay, bitmaps::img::diamond_image , 300);
+        display.display_pre(&mut delay, bitmaps::img::image_to_preformated_vector(bitmaps::img::square_image) , 300);
+        display.display_pre(&mut delay, bitmaps::img::image_to_preformated_vector(bitmaps::img::square_small_image), 300);
+        display.display_pre(&mut delay, bitmaps::img::image_to_preformated_vector(bitmaps::img::dot33) , 300);
+        display.display_pre(&mut delay, bitmaps::img::image_to_preformated_vector(bitmaps::img::diamond_small_image) , 300);
+        display.display_pre(&mut delay, bitmaps::img::image_to_preformated_vector(bitmaps::img::diamond_image) , 300);
         #[allow(non_snake_case)]
         let letter_I = [
             [0, 1, 1, 1, 0],
