@@ -8,7 +8,6 @@ use cortex_m_rt::entry;
 use microbit::hal::delay::Delay;
 use microbit::hal::prelude::*;
 
-use microbit::led;
 mod bitmaps;
 
 
@@ -84,10 +83,4 @@ fn main() -> ! {
     }
 }
 
-// #[test]
-// fn test_image_to_preformated_vector() {
-//     let ans = super::image_to_preformated_vector(0x05db0975);
-
-
-// }
 

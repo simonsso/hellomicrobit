@@ -29,8 +29,9 @@
  */
 
 
+
 pub mod img {
-   #![allow(non_upper_case_globals)]
+   #![allow(non_upper_case_globals,unused)]
 
    pub fn image_to_preformated_vector(image:u32) ->[[u8;9];3] {
       let mut ans:[[u8; 9]; 3]= [[0,0,0,0,0,0,0,0,0],    [0,0,0,0,0,0,0,0,0],    [0,0,0,0,0,0,0,0,0]];
