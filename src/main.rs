@@ -9,24 +9,6 @@ use microbit::hal::delay::Delay;
 use microbit::hal::prelude::*;
 
 use microbit::led;
-// // extern crate panic_halt;
-// // use panic_halt as _;
-
-// use microbit::display;
-// // use cortex_m_rt::entry;
-// use microbit::hal::prelude::*;
-// use microbit::display::image::GreyscaleImage;
-// use microbit::display::{self, Display, Frame, MicrobitDisplayTimer, MicrobitFrame};
-// use microbit::hal::lo_res_timer::{LoResTimer,FREQ_512HZ,FREQ_32768HZ};
-// use microbit::hal::nrf51;
-// use rtfm::app;
-
-// use cortex_m_rt::entry;
-
-// // use microbit::hal::delay::Delay;
-// // use microbit::hal::prelude::*;
-
-// use microbit::led;
 mod bitmaps;
 
 
