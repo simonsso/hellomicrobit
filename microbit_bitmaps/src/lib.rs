@@ -43,6 +43,20 @@ pub mod img {
         .map(|v| v.map(|i| 1_u8 & (image >> i) as u8))
     }
 
+    pub fn image_to_5x5(image: u32) -> [[u8; 5]; 5] {
+        let image = !image;
+
+        // Led positions from original bitmap
+        [ 
+            [0, 12, 1, 13, 2],
+            [21, 22, 23, 24, 25],
+            [10, 8, 11, 26, 9],
+            [7, 6, 5, 4, 3],
+            [20, 15, 18, 14, 19],
+        ]
+        .map(|v| v.map(|i| 1_u8 & (image >> i) as u8))
+    }
+
     ///```text
     /// An image in the shape of:
     ///    ***
@@ -767,10 +781,10 @@ pub mod img {
 
 #[cfg(test)]
 pub mod tests {
+    use crate::img;
+    use crate::img::image_to_preformated_vector;
     use core::assert_eq;
     use core::prelude::rust_2024::test;
-    use crate::img::image_to_preformated_vector;
-    use crate::img;
 
     // use crate::bitmaps::img::{self, image_to_preformated_vector};
 

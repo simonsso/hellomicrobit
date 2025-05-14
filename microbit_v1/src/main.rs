@@ -34,11 +34,11 @@ fn main() -> ! {
         // Configure button GPIOs as inputs
         let button_a = gpio.pin17.into_floating_input();
         let button_b = gpio.pin26.into_floating_input();
-        display.display_pre(&mut delay, bitmaps::img::image_to_preformated_vector(bitmaps::img::square_image) , 300);
-        display.display_pre(&mut delay, bitmaps::img::image_to_preformated_vector(bitmaps::img::square_small_image), 300);
-        display.display_pre(&mut delay, bitmaps::img::image_to_preformated_vector(bitmaps::img::dot33) , 300);
-        display.display_pre(&mut delay, bitmaps::img::image_to_preformated_vector(bitmaps::img::diamond_small_image) , 300);
-        display.display_pre(&mut delay, bitmaps::img::image_to_preformated_vector(bitmaps::img::diamond_image) , 300);
+        display.display_pre(&mut delay, microbit::led::Display::display2matrix(bitmaps::img::image_to_5x5(bitmaps::img::square_image)) , 300);
+        display.display_pre(&mut delay, microbit::led::Display::display2matrix(bitmaps::img::image_to_5x5(bitmaps::img::square_small_image)), 300);
+        display.display_pre(&mut delay, microbit::led::Display::display2matrix(bitmaps::img::image_to_5x5(bitmaps::img::dot33)) , 300);
+        display.display_pre(&mut delay, microbit::led::Display::display2matrix(bitmaps::img::image_to_5x5(bitmaps::img::diamond_small_image)) , 300);
+        display.display_pre(&mut delay, microbit::led::Display::display2matrix(bitmaps::img::image_to_5x5(bitmaps::img::diamond_image)) , 300);
         #[allow(non_snake_case)]
         let letter_I = [
             [0, 1, 1, 1, 0],
@@ -47,10 +47,10 @@ fn main() -> ! {
             [0, 0, 1, 0, 0],
             [0, 1, 1, 1, 0],
         ];
-        let image3 = bitmaps::img::image_to_preformated_vector(0x05db0975);
-        let image0 = bitmaps::img::image_to_preformated_vector(bitmaps::img::yes_image);
-        let image1 = bitmaps::img::image_to_preformated_vector(bitmaps::img::no_image);
-        let image2 = bitmaps::img::image_to_preformated_vector(bitmaps::img::dot33);
+        let image3 = microbit::led::Display::display2matrix(bitmaps::img::image_to_5x5(0x05db0975));
+        let image0 = microbit::led::Display::display2matrix(bitmaps::img::image_to_5x5(bitmaps::img::yes_image));
+        let image1 = microbit::led::Display::display2matrix(bitmaps::img::image_to_5x5(bitmaps::img::no_image));
+        let image2 = microbit::led::Display::display2matrix(bitmaps::img::image_to_5x5(bitmaps::img::dot33));
         let image4 = microbit::led::Display::display2matrix(letter_I);
 
 
