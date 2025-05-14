@@ -43,6 +43,27 @@ pub mod img {
         .map(|v| v.map(|i| 1_u8 & (image >> i) as u8))
     }
 
+
+
+    pub fn image_to_5x5(image:u32) -> [[u8;5];5] {
+    const LED_LAYOUT: [[(usize, usize); 5]; 5] = [
+        [(0, 0), (1, 3), (0, 1), (1, 4), (0, 2)],
+        [(2, 3), (2, 4), (2, 5), (2, 6), (2, 7)],
+        [(1, 1), (0, 8), (1, 2), (2, 8), (1, 0)],
+        [(0, 7), (0, 6), (0, 5), (0, 4), (0, 3)],
+        [(2, 2), (1, 6), (2, 0), (1, 5), (2, 1)],
+    ]   ;
+
+        let ans=LED_LAYOUT.map(|v|v.map(|(row,col)| (row*9+col) as u8));
+        ans
+    }
+
+    #[test]
+    fn test_array() {
+
+        let x = image_to_5x5(0);
+        assert_eq!(x, [[0;5];5]);
+    }
     ///```text
     /// An image in the shape of:
     ///    ***
