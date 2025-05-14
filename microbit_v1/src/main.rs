@@ -7,8 +7,7 @@ use cortex_m_rt::entry;
 
 use microbit::hal::delay::Delay;
 use microbit::hal::prelude::*;
-
-mod bitmaps;
+use microbit_bitmaps as bitmaps;
 
 
 #[entry]
