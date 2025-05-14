@@ -16,9 +16,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Build
-      run: cargo build --verbose
-      working-directory: microbit_v1
     - name: Run tests
       run: cargo test --verbose
       working-directory: microbit_bitmaps
+    - name: Build
+      run: cargo build --verbose
+      working-directory: microbit_v1
+
