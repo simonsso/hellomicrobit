@@ -16,6 +16,7 @@ nrf51-hal = "0.7.0"
 tiny-led-matrix = "1.0.1"
 panic-halt = "0.2.0"
 microbit-bitmaps = {path = "../microbit_bitmaps/"}
+embedded-hal ="1.0.0"
 
 
 [profile.dev]
