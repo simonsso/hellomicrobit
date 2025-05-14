@@ -1,5 +1,5 @@
 [package]
-name = "microbit_bitmaps"
+name = "microbit-bitmaps"
 version = "0.2.0"
 edition = "2024"
 
