@@ -1,0 +1,28 @@
+[package]
+
+version = "0.1.0"
+authors = ["Fredrik Simonsson <simson@thesimson.net>"]
+edition = "2018"
+license = "0BSD"
+name = "hellomicrobit"
+readme = "README.md"
+
+[dependencies]
+microbit = "0.8.0"
+cortex-m = "0.6.1"
+cortex-m-rt = "0.6.10"
+nb = "0.1.2"
+nrf51-hal = "0.7.0"
+tiny-led-matrix = "1.0.1"
+panic-halt = "0.2.0"
+microbit-bitmaps = {path = "../microbit_bitmaps/"}
+
+
+[profile.dev]
+debug = true
+codegen-units = 1
+
+[profile.release]
+debug = true
+lto = true
+opt-level = "s"
