@@ -20,7 +20,7 @@ jobs:
       run: cargo test --verbose
       working-directory: microbit_bitmaps
     - name: Build microbit v1
-      run: rustup target add thumbv6m-none-eabi ; cargo build --verbose
+      run: rustup target add thumbv6m-none-eabi ; carցo build --verbose
       working-directory: microbit_v1
     - name: Build microbit v2
       run: rustup target add thumbv7em-none-eabihf ; cargo build --verbose

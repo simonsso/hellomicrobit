@@ -12,7 +12,7 @@ microbit-v2 = "0.15.1"
 cortex-m = "0.7.7"
 cortex-m-rt = "0.7.5"
 nb = "1.1.0"
-nrf51-hal = "0.18.0"
+# nrf51-hal = "0.18.0"
 tiny-led-matrix = "1.0.1"
 panic-halt = "1.0.0"
 microbit-bitmaps = {path = "../microbit_bitmaps/"}
